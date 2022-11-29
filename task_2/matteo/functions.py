@@ -1,6 +1,9 @@
-from statistics import mean
-
+import datetime
+from statistics import mean, median, stdev
 import numpy as np
+import neurokit2 as nk
+import pandas as pd
+from biosppy.signals import ecg
 
 
 def calc_R_period(signal, r_peaks, measurements):
@@ -10,14 +13,22 @@ def calc_R_period(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(r_onset[i]) and not np.isnan(r_offset[i]):
             periods.append(r_offset[i] - r_onset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_R_amplitude(signal, r_peaks, measurements):
     amplitudes = []
     for peak in r_peaks:
         amplitudes.append(signal[peak])
-    return mean(amplitudes) if len(amplitudes) else 0.0
+    amplitudes = np.array(amplitudes)
+    if len(amplitudes):
+        return np.mean(amplitudes),np.median(amplitudes), np.std(amplitudes)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_Q_amplitude(signal, r_peaks, measurements):
@@ -26,7 +37,11 @@ def calc_Q_amplitude(signal, r_peaks, measurements):
     for peak in x_peaks:
         if not np.isnan(peak):
             amplitudes.append(signal[peak])
-    return mean(amplitudes) if len(amplitudes) else 0.0
+    amplitudes = np.array(amplitudes)
+    if len(amplitudes):
+        return np.mean(amplitudes),np.median(amplitudes), np.std(amplitudes)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_S_amplitude(signal, r_peaks, measurements):
@@ -35,7 +50,11 @@ def calc_S_amplitude(signal, r_peaks, measurements):
     for peak in x_peaks:
         if not np.isnan(peak):
             amplitudes.append(signal[peak])
-    return mean(amplitudes)
+    amplitudes = np.array(amplitudes)
+    if len(amplitudes):
+        return np.mean(amplitudes),np.median(amplitudes), np.std(amplitudes)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_T_amplitude(signal, r_peaks, measurements):
@@ -44,7 +63,11 @@ def calc_T_amplitude(signal, r_peaks, measurements):
     for peak in x_peaks:
         if not np.isnan(peak):
             amplitudes.append(signal[peak])
-    return mean(amplitudes) if len(amplitudes) else 0.0
+    amplitudes = np.array(amplitudes)
+    if len(amplitudes):
+        return np.mean(amplitudes),np.median(amplitudes), np.std(amplitudes)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_P_amplitude(signal, r_peaks, measurements):
@@ -53,7 +76,11 @@ def calc_P_amplitude(signal, r_peaks, measurements):
     for peak in x_peaks:
         if not np.isnan(peak):
             amplitudes.append(signal[peak])
-    return mean(amplitudes) if len(amplitudes) else 0.0
+    amplitudes = np.array(amplitudes)
+    if len(amplitudes):
+        return np.mean(amplitudes),np.median(amplitudes), np.std(amplitudes)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_T_period(signal, r_peaks, measurements):
@@ -63,7 +90,11 @@ def calc_T_period(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(t_onset[i]) and not np.isnan(t_offset[i]):
             periods.append(t_offset[i] - t_onset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_P_period(signal, r_peaks, measurements):
@@ -73,7 +104,11 @@ def calc_P_period(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(p_onset[i]) and not np.isnan(p_offset[i]):
             periods.append(p_offset[i] - p_onset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_Q_period(signal, r_peaks, measurements):
@@ -82,7 +117,11 @@ def calc_Q_period(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(r_onset[i]):
             periods.append(r_peaks[i] - r_onset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
 
 
 def calc_S_period(signal, r_peaks, measurements):
@@ -91,7 +130,12 @@ def calc_S_period(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(r_offset[i]):
             periods.append(r_offset[i] - r_peaks[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
+
 
 def calc_PR_interval(signal, r_peaks, measurements):
     p_onset = measurements['ECG_P_Onsets']
@@ -100,7 +144,12 @@ def calc_PR_interval(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(p_onset[i]) and not np.isnan(r_onset[i]):
             periods.append(r_onset[i] - p_onset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
+
 
 def calc_QT_interval(signal, r_peaks, measurements):
     t_offset = measurements['ECG_T_Offsets']
@@ -109,7 +158,12 @@ def calc_QT_interval(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(t_offset[i]) and not np.isnan(r_onset[i]):
             periods.append(t_offset[i] - r_onset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
+
 
 def calc_PR_segment(signal, r_peaks, measurements):
     p_offset = measurements['ECG_P_Offsets']
@@ -118,37 +172,86 @@ def calc_PR_segment(signal, r_peaks, measurements):
     for i in range(len(r_peaks)):
         if not np.isnan(p_offset[i]) and not np.isnan(r_onset[i]):
             periods.append(r_onset[i] - p_offset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
 
-def calc_ST_segmentl(signal, r_peaks, measurements):
+
+def calc_ST_segment(signal, r_peaks, measurements):
     t_onset = measurements['ECG_T_Onsets']
     r_offset = measurements['ECG_R_Offsets']
     periods = []
     for i in range(len(r_peaks)):
         if not np.isnan(r_offset[i]) and not np.isnan(t_onset[i]):
             periods.append(t_onset[i] - r_offset[i])
-    return mean(periods) if len(periods) else 0.0
+    periods = np.array(periods)
+    if len(periods):
+        return np.mean(periods),np.median(periods), np.std(periods)
+    else:
+        return 0.0,0.0,0.0
 
 
 def get_nk_features(signal, r_peaks, measurements):
     features = np.array([
-        calc_R_period(signal, r_peaks, measurements),
-        calc_R_amplitude(signal, r_peaks, measurements),
-        calc_Q_amplitude(signal, r_peaks, measurements),
-        calc_S_amplitude(signal, r_peaks, measurements),
-        calc_T_amplitude(signal, r_peaks, measurements),
-        calc_P_amplitude(signal, r_peaks, measurements),
-        calc_T_period(signal, r_peaks, measurements),
-        calc_P_period(signal, r_peaks, measurements),
-        calc_Q_period(signal, r_peaks, measurements),
-        calc_S_period(signal, r_peaks, measurements),
-        calc_PR_interval(signal, r_peaks, measurements),
-        calc_QT_interval(signal, r_peaks, measurements),
-        calc_PR_segment(signal, r_peaks, measurements),
-        calc_ST_segmentl(signal, r_peaks, measurements)
+        calc_R_period(signal, r_peaks, measurements)[0],
+        calc_R_period(signal, r_peaks, measurements)[1],
+        calc_R_period(signal, r_peaks, measurements)[2],
+
+        calc_R_amplitude(signal, r_peaks, measurements)[0],
+        calc_R_amplitude(signal, r_peaks, measurements)[1],
+        calc_R_amplitude(signal, r_peaks, measurements)[2],
+
+        calc_Q_amplitude(signal, r_peaks, measurements)[0],
+        calc_Q_amplitude(signal, r_peaks, measurements)[1],
+        calc_Q_amplitude(signal, r_peaks, measurements)[2],
+
+        calc_S_amplitude(signal, r_peaks, measurements)[0],
+        calc_S_amplitude(signal, r_peaks, measurements)[1],
+        calc_S_amplitude(signal, r_peaks, measurements)[2],
+
+        calc_T_amplitude(signal, r_peaks, measurements)[0],
+        calc_T_amplitude(signal, r_peaks, measurements)[1],
+        calc_T_amplitude(signal, r_peaks, measurements)[2],
+
+        calc_P_amplitude(signal, r_peaks, measurements)[0],
+        calc_P_amplitude(signal, r_peaks, measurements)[1],
+        calc_P_amplitude(signal, r_peaks, measurements)[2],
+
+        calc_T_period(signal, r_peaks, measurements)[0],
+        calc_T_period(signal, r_peaks, measurements)[1],
+        calc_T_period(signal, r_peaks, measurements)[2],
+
+        calc_P_period(signal, r_peaks, measurements)[0],
+        calc_P_period(signal, r_peaks, measurements)[1],
+        calc_P_period(signal, r_peaks, measurements)[2],
+
+        calc_Q_period(signal, r_peaks, measurements)[0],
+        calc_Q_period(signal, r_peaks, measurements)[1],
+        calc_Q_period(signal, r_peaks, measurements)[2],
+
+        calc_S_period(signal, r_peaks, measurements)[0],
+        calc_S_period(signal, r_peaks, measurements)[1],
+        calc_S_period(signal, r_peaks, measurements)[2],
+
+        calc_PR_interval(signal, r_peaks, measurements)[0],
+        calc_PR_interval(signal, r_peaks, measurements)[1],
+        calc_PR_interval(signal, r_peaks, measurements)[2],
+
+        calc_QT_interval(signal, r_peaks, measurements)[0],
+        calc_QT_interval(signal, r_peaks, measurements)[1],
+        calc_QT_interval(signal, r_peaks, measurements)[2],
+
+        calc_PR_segment(signal, r_peaks, measurements)[0],
+        calc_PR_segment(signal, r_peaks, measurements)[1],
+        calc_PR_segment(signal, r_peaks, measurements)[2],
+
+        calc_ST_segment(signal, r_peaks, measurements)[0],
+        calc_ST_segment(signal, r_peaks, measurements)[1],
+        calc_ST_segment(signal, r_peaks, measurements)[2]
     ])
     return features
-
 
 def add_basic_info(row, arr, name):
     if len(arr) > 0:
