@@ -283,6 +283,15 @@ def calc_ST_segment(signal, r_peaks, measurements):
     else:
         return 35 * [0.0] 
 
+def calc_RR_intervals(signal, r_peaks,measurements):
+    rr_intervals = np.diff(r_peaks)
+    delta_y = np.diff(signal[r_peaks])
+    slope = delta_y/rr_intervals
+
+    if len(rr_intervals):
+        return np.mean(rr_intervals),np.median(rr_intervals), np.std(rr_intervals), np.max(rr_intervals), np.min(rr_intervals), np.max(rr_intervals) - np.min(rr_intervals), np.mean(rr_intervals) - np.median(rr_intervals), np.log(np.mean(rr_intervals)), np.log(np.median(rr_intervals)), np.mean(slope), np.median(slope), np.std(slope), np.max(slope), np.min(slope), np.max(slope) - np.min(slope), np.mean(slope) - np.median(slope), np.mean(delta_y), np.median(delta_y), np.std(delta_y), np.max(delta_y), np.min(delta_y), np.max(delta_y) - np.min(delta_y), np.mean(delta_y) - np.median(delta_y)
+    else:
+        return 23 * [0.0]
 
 def get_nk_features(signal, r_peaks, measurements):
     features = np.concatenate((
@@ -299,7 +308,9 @@ def get_nk_features(signal, r_peaks, measurements):
         calc_PR_interval(signal, r_peaks, measurements),
         calc_QT_interval(signal, r_peaks, measurements),
         calc_PR_segment(signal, r_peaks, measurements),
+        calc_RR_intervals(signal, r_peaks, measurements),
         calc_ST_segment(signal, r_peaks, measurements)),axis=None)
+        
     return features
 
 def add_basic_info(row, arr, name):
